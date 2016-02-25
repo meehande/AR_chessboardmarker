@@ -1,0 +1,16 @@
+﻿Build started 25/02/2016 12:36:51.
+     1>Project "C:\Users\Deirdre Meehan\Desktop\AugmentedReality\AR_chessboard\AR_chessboard\OpenCVExample.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /IC:\Vision\opencv\build /IC:\Vision\opencv\build\include\opencv /IC:\Vision\opencv\sources\modules\core\include /IC:\Vision\opencv\build\include /IC:\Vision\opencv\sources\modules\imgproc\include /IC:\Vision\opencv\sources\modules\flann\include /IC:\Vision\opencv\sources\modules\videostab\include /IC:\Vision\opencv\sources\modules\ts\include /IC:\Vision\opencv\sources\modules\stitching\include /IC:\Vision\opencv\sources\modules\calib3d\include /IC:\Vision\opencv\sources\modules\photo\include /IC:\Vision\opencv\sources\modules\objdetect\include /IC:\Vision\opencv\sources\modules\video\include /IC:\Vision\opencv\sources\modules\ml\include /IC:\Vision\opencv\sources\modules\features2d\include /IC:\Vision\opencv\sources\modules\highgui\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Source.cpp
+         Source.cpp
+     1>c:\users\deirdre meehan\desktop\augmentedreality\ar_chessboard\ar_chessboard\source.cpp(131): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Deirdre Meehan\Desktop\AugmentedReality\AR_chessboard\AR_chessboard\Debug\OpenCVExample.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\Vision\opencv\build\x86\vc11\staticlib opencv_calib3d300d.lib opencv_core300d.lib opencv_features2d300d.lib opencv_flann300d.lib opencv_hal300d.lib opencv_highgui300d.lib opencv_imgcodecs300d.lib opencv_imgproc300d.lib opencv_ml300d.lib opencv_objdetect300d.lib opencv_photo300d.lib opencv_shape300d.lib opencv_stitching300d.lib opencv_superres300d.lib opencv_ts300d.lib opencv_video300d.lib opencv_videoio300d.lib opencv_videostab300d.lib libtiffd.lib libpngd.lib libjpegd.lib libjasperd.lib IlmImfd.lib libwebpd.lib ippicvmt.lib zlibd.lib comctl32.lib vfw32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Deirdre Meehan\Desktop\AugmentedReality\AR_chessboard\AR_chessboard\Debug\OpenCVExample.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Deirdre Meehan\Desktop\AugmentedReality\AR_chessboard\AR_chessboard\Debug\OpenCVExample.lib" /MACHINE:X86 Debug\CameraCalibration.obj
+         Debug\Source.obj
+         Debug\Utilities.obj
+         OpenCVExample.vcxproj -> C:\Users\Deirdre Meehan\Desktop\AugmentedReality\AR_chessboard\AR_chessboard\Debug\OpenCVExample.exe
+     1>Done Building Project "C:\Users\Deirdre Meehan\Desktop\AugmentedReality\AR_chessboard\AR_chessboard\OpenCVExample.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:13.08
