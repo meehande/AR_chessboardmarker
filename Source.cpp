@@ -16,6 +16,9 @@ using namespace cv;
 #define CHESSBOARD_OBJECT 1
 #define SAMPLE_FRAME 2
 
+Mat createExtrinsic(Mat rotationMatrix, Mat tvec);
+Mat cvToglModelView(Mat cvMatrix);
+
 int main(int argc, const char** argv)
 {
 	char* file_location = "Media/";
@@ -93,7 +96,7 @@ int main(int argc, const char** argv)
 	cvtColor(image[CHESSBOARD_OBJECT], viewGray, CV_BGR2GRAY);
 	imshow("cray", viewGray);
 	found = findChessboardCorners(viewGray, boardSize, objectpoints_2f,CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
-	cout << found << endl;	
+	//cout << found << endl;	
 	if(found) {
 		cornerSubPix( viewGray, objectpoints_2f, Size(11,11), Size(-1,-1), TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
 		drawChessboardCorners( image[1], boardSize, Mat(objectpoints_2f), found );
@@ -101,12 +104,12 @@ int main(int argc, const char** argv)
 	}
 	imshow("found", image[CHESSBOARD_OBJECT]);
 	vector<Point3f> objectpoints_3f;
-	/*for( int i = 0; i< objectpoints_2f.size(); i++ )
+	for( int i = 0; i< objectpoints_2f.size(); i++ )
      {
-		 objectpoints_3f.push_back(Point3f(objectpoints_2f.
-     }*/
-
-
+		// cout << endl << objectpoints_2f[i] << endl;
+		 objectpoints_3f.push_back(Point3f(objectpoints_2f[i].x, objectpoints_2f[i].y, 0.0));
+		// cout << objectpoints_3f[i] << endl;
+     }
 
 
 	//READ CAMERA FROM CAMERA.XML
@@ -121,8 +124,8 @@ int main(int argc, const char** argv)
 
 	fs.release();  //close file
 
-	cout << cameraMatrix << endl;
-	cout << distortionCoefficients << endl;
+	cout << "camera \n"<< cameraMatrix << endl;
+	cout << "distortion\n"<< distortionCoefficients << endl;
 
 	//FIND IMAGE POINTS
 
@@ -162,35 +165,29 @@ int main(int argc, const char** argv)
 	
 	
 	//FIND EXTRINSIC - SOLVEPNP
-	//vector<Mat> rotationvector;
-	//vector<Mat> translationvector;
-	//bool success = solvePnP(objectpoints, corners, cameraMatrix, distortionCoefficients, rotationvector, translationvector);
-	//if(success)
-		cout <<"Hooray!\n";
+	Mat rvec(3,1,cv::DataType<double>::type);
+	Mat tvec(3,1,cv::DataType<double>::type);
+	bool success = solvePnP(objectpoints_3f, corners, cameraMatrix, distortionCoefficients, rvec, tvec);
+	if(success)
+	cout <<"Hooray!\n\n";
+	cout << "rvec\n" << rvec << endl;
+	cout << "tvec\n" << tvec << endl;
+	Mat rotationMatrix;
+	Rodrigues(rvec, rotationMatrix); /**report! explain this!**/
+	cout << "r mat\n" << rotationMatrix <<endl;
 
-	
+	//FORMAT EXTRNISIC AS MODELVIEW FOR OPENGL
+	Mat extrinsicmatrix_4x4=Mat::zeros(4,4, cv::DataType<double>::type);
+	extrinsicmatrix_4x4 = createExtrinsic(rotationMatrix, tvec);
+	cout << "EXTRINSIC\n" << extrinsicmatrix_4x4 << endl;
+	cout << "ROTATION\n" <<rotationMatrix << endl;
+	cout << "TRANSLATION\n" << tvec << endl;	//extrinsicmatrix_4x4.col(3) = tvec
+	Mat glModelView = cvToglModelView(extrinsicmatrix_4x4);
+	cout << "model\view \n" << glModelView<<endl;
 
 
-	/*vector<Point2f> specialcorners;
-	specialcorners.push_back(corners[0]);
-	specialcorners.push_back(corners[8]);
-	specialcorners.push_back(corners[53]);
-	specialcorners.push_back(corners[45]);
-	for( int i = 0; i< specialcorners.size(); i++ )
-     {
-       Scalar color = Scalar( 1,0,0 );
-       drawContours( image[1], specialcorners, i, color );
-     }
-	imshow("contoured", image[1]); */
 
-	/**
-	* corners of bounding rect are 
-	corners[0]
-	corners[8]
-	corners[53]
-	corners[45]
-	- clockwise from bottom left
-	**/
+
 
 	int choice =0;
 	do
@@ -201,4 +198,33 @@ int main(int argc, const char** argv)
 	
 			
 	} while ((choice != 'x') && (choice != 'X'));
+}
+
+Mat createExtrinsic(Mat rotationMatrix, Mat tvec){
+	/**Maybe need to transpose rotation first or transpose result...**/
+	Mat extrinsicmatrix_4x4=Mat::zeros(4,4, cv::DataType<double>::type);	
+	//extrinsicmatrix_4x4.col(3) = tvec;
+	//Mat(0,0,0,1).copyTo(extrinsicmatrix_4x4.row(4)) ;
+	extrinsicmatrix_4x4.at<double>(0,0) = rotationMatrix.at<double>(0,0);
+	extrinsicmatrix_4x4.at<double>(0,1) = rotationMatrix.at<double>(0,1);
+	extrinsicmatrix_4x4.at<double>(0,2) = rotationMatrix.at<double>(0,2);
+	extrinsicmatrix_4x4.at<double>(1,0) = rotationMatrix.at<double>(1,0);
+	extrinsicmatrix_4x4.at<double>(1,1) = rotationMatrix.at<double>(1,1);
+	extrinsicmatrix_4x4.at<double>(1,2) = rotationMatrix.at<double>(1,2);
+	extrinsicmatrix_4x4.at<double>(2,0) = rotationMatrix.at<double>(2,0);
+	extrinsicmatrix_4x4.at<double>(2,1) = rotationMatrix.at<double>(2,1);
+	extrinsicmatrix_4x4.at<double>(2,2) = rotationMatrix.at<double>(2,2);
+	extrinsicmatrix_4x4.at<double>(0,3) = tvec.at<double>(0);
+	extrinsicmatrix_4x4.at<double>(1,3) = tvec.at<double>(1);
+	extrinsicmatrix_4x4.at<double>(2,3) = tvec.at<double>(2);
+	extrinsicmatrix_4x4.at<double>(3,3) = 1;
+	return extrinsicmatrix_4x4;
+}
+
+Mat cvToglModelView(Mat cvMatrix){
+	//invert axes because different coordinate systems
+	Mat invertAxes = Mat::eye(4,4, cv::DataType<double>::type);
+	invertAxes.at<double>(1,1) = -1;
+	invertAxes.at<double>(2,2) = -1;
+	return invertAxes*cvMatrix;
 }
